@@ -1,0 +1,40 @@
+PODS:
+  - device_info_plus (0.0.1):
+    - Flutter
+  - device_information (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+  - flutter_barometer (0.0.1):
+    - Flutter
+  - permission_handler_apple (9.0.4):
+    - Flutter
+
+DEPENDENCIES:
+  - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
+  - device_information (from `.symlinks/plugins/device_information/ios`)
+  - Flutter (from `Flutter`)
+  - flutter_barometer (from `.symlinks/plugins/flutter_barometer/ios`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+
+EXTERNAL SOURCES:
+  device_info_plus:
+    :path: ".symlinks/plugins/device_info_plus/ios"
+  device_information:
+    :path: ".symlinks/plugins/device_information/ios"
+  Flutter:
+    :path: Flutter
+  flutter_barometer:
+    :path: ".symlinks/plugins/flutter_barometer/ios"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
+
+SPEC CHECKSUMS:
+  device_info_plus: e5c5da33f982a436e103237c0c85f9031142abed
+  device_information: d652f6dcea86bdc5300ffd495486de1d5047bf4f
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  flutter_barometer: d00841d78c4c7c1bdbe3b130fb90daaa2acc7568
+  permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
+
+PODFILE CHECKSUM: 4e8f8b2be68aeea4c0d5beb6ff1e79fface1d048
+
+COCOAPODS: 1.11.3
