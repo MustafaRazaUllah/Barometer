@@ -1,0 +1,25 @@
+<<<<<<<======   Barometer App ======>>>>>>>
+
+
+==>>>> Barometer JKS File <<<<==
+
+
+1. when use need use the <<<< barometer.jks >>> file.
+2. then change the extension of the <<< barometer.txt >>>  to  <<< barometer.jks >>> and then use it.
+
+
+
+==>>>> Reference the keystore from the app <<<<==
+
+
+1. Create a file named [project]/android/key.properties that contains a reference to your keystore:
+2. below key.properties data
+
+storePassword=barometer
+keyPassword=barometer
+keyAlias=barometer
+storeFile=../app/barometer.jks
+
+
+
+Thenk you so much.

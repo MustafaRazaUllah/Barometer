@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_final_fields
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:device_imei/device_imei.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -25,7 +26,10 @@ class _SensorsViewState extends State<SensorsView> {
       _minimumPressure = 0.0,
       _maximumPressure = 0.0,
       _deviation = 0.0;
-  String _imeiNo = "", _modelName = "", _manufacturerName = "";
+  String? _imeiNo, _modelName = "", _manufacturerName = "";
+  bool isNotExistBarometer = false;
+
+  TextEditingController _imeiController = TextEditingController();
 
   List<double> _currentPressureList = [];
 
@@ -33,7 +37,7 @@ class _SensorsViewState extends State<SensorsView> {
   @override
   void initState() {
     super.initState();
-    valuesdara();
+    valuesData();
     checkpermissions();
     Future.delayed(const Duration(seconds: 1), () => standeredDaviation());
     _timer = Timer.periodic(
@@ -66,11 +70,25 @@ class _SensorsViewState extends State<SensorsView> {
     });
   }
 
-  void valuesdara() async {
+  void valuesData() async {
+    Future.delayed(const Duration(seconds: 2), () {
+      if (_currentPressure == 0.0) {
+        setState(() {
+          isNotExistBarometer = true;
+        });
+      } else {
+        setState(() {
+          isNotExistBarometer = false;
+        });
+      }
+    });
+
     flutterBarometerEvents.listen((FlutterBarometerEvent event) {
+      print("==>>" + event.toString());
       setState(() {
         _currentPressure = (event.pressure * 1000).round() / 1000;
         _currentPressureList.add(_currentPressure);
+        print("==>>" + _currentPressure.toString());
       });
     });
   }
@@ -90,51 +108,137 @@ class _SensorsViewState extends State<SensorsView> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: SizedBox.expand(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Container(
-                color: Colors.transparent,
-                width: width,
-                padding: EdgeInsets.symmetric(horizontal: width / 7),
-                child: Center(child: Image.asset('assets/applogo.png')),
-              ),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SizedBox.expand(
+          child: SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  color: Colors.transparent,
+                  width: width,
+                  height: height * 0.37,
+                  padding: EdgeInsets.symmetric(horizontal: width / 7),
+                  child: Center(child: Image.asset('assets/applogo.png')),
+                ),
+                Column(
+                  children: [
+                    Container(
+                      width: width - (width / 20) * 2,
+                      height: 60,
+                      padding: const EdgeInsets.fromLTRB(3, 3, 3, 3),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xff1692d0),
+                            Color(0xff132e72),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: Container(
+                        width: width - (width / 20) * 2,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(11.5),
+                        ),
+                        child: TextFormField(
+                          cursorColor: const Color(0xff1692d0),
+                          controller: Platform.isIOS ? _imeiController : null,
+                          // initialValue: Platform.isAndroid ? _imeiNo : null,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            contentPadding: const EdgeInsets.only(
+                                left: 15, bottom: 5, top: 11, right: 15),
+                            hintText: Platform.isAndroid
+                                ? _imeiNo ?? "Please Enter IMEI Number"
+                                : "Please Enter IMEI Number",
+                          ),
+                          readOnly: Platform.isIOS ? false : true,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Container(
+                      color: Colors.transparent,
+                      width: width,
+                      margin: EdgeInsets.symmetric(horizontal: width / 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          tileWidget(
+                            title: 'Current Pressure',
+                            value: isNotExistBarometer
+                                ? "Barometer sensor Not Exist in this Device"
+                                : _currentPressure.toStringAsFixed(3),
+                            isNotExistBaeometer: isNotExistBarometer,
+                          ),
+                          tileWidget(
+                            title: 'Maximum  Pressure',
+                            value: isNotExistBarometer
+                                ? "Barometer sensor Not Exist in this Device"
+                                : _maximumPressure.toStringAsFixed(3),
+                            isNotExistBaeometer: isNotExistBarometer,
+                          ),
+                          tileWidget(
+                            title: 'Minimum Pressure',
+                            value: isNotExistBarometer
+                                ? "Barometer sensor Not Exist in this Device"
+                                : _minimumPressure.toStringAsFixed(3),
+                            isNotExistBaeometer: isNotExistBarometer,
+                          ),
+                          tileWidget(
+                            title: 'Standard Deviation',
+                            value: isNotExistBarometer
+                                ? "Barometer sensor Not Exist in this Device"
+                                : _deviation.toStringAsFixed(3),
+                            isNotExistBaeometer: isNotExistBarometer,
+                          ),
+                          customButton(
+                            isActive: isActiveStart,
+                            callback: (val) {
+                              if (_imeiController.text.isEmpty) {
+                                alert(context, 'Error',
+                                    "Please Enter IMEI Number", () {
+                                  Navigator.pop(context);
+                                });
+                                return;
+                              }
+                              if (_imeiController.text.length < 14) {
+                                alert(context, 'Error', "invalid IMEI Number",
+                                    () {
+                                  Navigator.pop(context);
+                                });
+                                return;
+                              }
+                              setState(() {
+                                isActiveStart = val;
+                              });
+                              funcationcall();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            Container(
-              color: Colors.transparent,
-              width: width,
-              margin: EdgeInsets.symmetric(horizontal: width / 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  tileWidget(
-                      title: 'Current Pressure',
-                      value: _currentPressure.toStringAsFixed(3)),
-                  tileWidget(
-                      title: 'Maximum  Pressure',
-                      value: _maximumPressure.toStringAsFixed(3)),
-                  tileWidget(
-                      title: 'Minimum Pressure',
-                      value: _minimumPressure.toStringAsFixed(3)),
-                  tileWidget(
-                    title: 'Standard Deviation',
-                    value: _deviation.toStringAsFixed(3),
-                  ),
-                  customButton(
-                    isActive: isActiveStart,
-                    callback: (val) {
-                      setState(() {
-                        isActiveStart = val;
-                      });
-                      funcationcall();
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -143,6 +247,7 @@ class _SensorsViewState extends State<SensorsView> {
   Widget tileWidget({
     String title = 'Sensors Name',
     dynamic value = 123.456,
+    required bool isNotExistBaeometer,
   }) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
@@ -166,12 +271,12 @@ class _SensorsViewState extends State<SensorsView> {
               ),
             ),
             width: width,
-            height: width / 10,
+            height: width / 12,
             child: Center(
               child: Text(
                 title,
                 style: TextStyle(
-                  fontSize: width * 0.05,
+                  fontSize: width * 0.04,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
@@ -195,7 +300,7 @@ class _SensorsViewState extends State<SensorsView> {
             ),
             padding: const EdgeInsets.fromLTRB(3, 0, 3, 3),
             width: width,
-            height: width / 10,
+            height: width / 12,
             child: Container(
               decoration: const BoxDecoration(
                 color: Colors.white,
@@ -210,7 +315,8 @@ class _SensorsViewState extends State<SensorsView> {
                 child: GradientText(
                   value.toString(),
                   style: TextStyle(
-                    fontSize: width * 0.05,
+                    fontSize:
+                        isNotExistBaeometer ? width * 0.032 : width * 0.04,
                     fontWeight: FontWeight.w600,
                   ),
                   gradient: const LinearGradient(colors: [
@@ -233,7 +339,7 @@ class _SensorsViewState extends State<SensorsView> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 15.0),
+      padding: const EdgeInsets.only(top: 10, bottom: 15.0),
       child: Column(
         children: [
           Material(
@@ -288,7 +394,7 @@ class _SensorsViewState extends State<SensorsView> {
       _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
         setState(() {
           Map data = {
-            "IMEI": _imeiNo,
+            "IMEI": Platform.isIOS ? _imeiController.text : _imeiNo,
             "Model": "$_manufacturerName  $_modelName}",
             "Barometer Data": {
               "Max Pressure": _maximumPressure.toStringAsFixed(3),
@@ -327,4 +433,58 @@ class GradientText extends StatelessWidget {
       child: Text(text, style: style),
     );
   }
+}
+
+alert(context, title, msg, function, {no = 1}) {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(const Radius.circular(20))),
+        backgroundColor: Colors.white,
+        title: Text(
+          title,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
+        content: Text(
+          msg,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          alertActionButton(
+              title == 'Success'
+                  ? 'OK'
+                  : title == 'Confirm'
+                      ? 'Yes'
+                      : 'Close',
+              function)
+        ],
+      );
+    },
+  );
+}
+
+alertActionButton(text, function) {
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 3, vertical: 5),
+    child: MaterialButton(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+      textColor: Colors.white,
+      color: Color(0xff132e72),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+      ),
+      onPressed: function,
+    ),
+  );
 }

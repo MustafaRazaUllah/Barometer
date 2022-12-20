@@ -1,4 +1,4 @@
-package com.example.barometer
+package com.barometer.app
 
 import io.flutter.embedding.android.FlutterActivity
 

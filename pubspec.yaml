@@ -51,6 +51,12 @@ dependencies:
   device_imei: ^0.0.2
   device_info_plus: ^8.0.0
 
+
+  firebase_auth: ^4.2.1
+  firebase_analytics: ^10.0.7
+  firebase_core: ^2.4.0
+  cloud_firestore: ^4.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

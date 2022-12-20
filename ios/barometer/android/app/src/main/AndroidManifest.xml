@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.barometer">
+    package="com.barometer.app">
    <application
         android:label="barometer"
         android:name="${applicationName}"
