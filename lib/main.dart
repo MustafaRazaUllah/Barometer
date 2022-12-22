@@ -1,11 +1,12 @@
+import 'package:barometer/constant.dart';
 import 'package:barometer/view_sensors.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp();
+
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Barometer',
+      title: Constants.appName,
       theme: ThemeData(
         colorScheme: ThemeData().colorScheme.copyWith(primary: Colors.amber),
       ),
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
           child: child!,
         );
       },
-      home: SensorsView(),
+      home: const SensorsView(),
     );
   }
 }

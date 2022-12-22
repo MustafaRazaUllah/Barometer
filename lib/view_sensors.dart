@@ -1,8 +1,10 @@
-// ignore_for_file: prefer_final_fields
+// ignore_for_file: prefer_final_fields, sort_child_properties_last
 
 import 'dart:async';
 import 'dart:io';
 
+import 'package:barometer/constant.dart';
+import 'package:barometer/service.dart';
 import 'package:device_imei/device_imei.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:device_information/device_information.dart';
@@ -84,11 +86,9 @@ class _SensorsViewState extends State<SensorsView> {
     });
 
     flutterBarometerEvents.listen((FlutterBarometerEvent event) {
-      print("==>>" + event.toString());
       setState(() {
         _currentPressure = (event.pressure * 1000).round() / 1000;
         _currentPressureList.add(_currentPressure);
-        print("==>>" + _currentPressure.toString());
       });
     });
   }
@@ -123,52 +123,102 @@ class _SensorsViewState extends State<SensorsView> {
                   width: width,
                   height: height * 0.37,
                   padding: EdgeInsets.symmetric(horizontal: width / 7),
-                  child: Center(child: Image.asset('assets/applogo.png')),
+                  child: Center(child: Image.asset(Constants.logoPath)),
                 ),
                 Column(
                   children: [
-                    Container(
-                      width: width - (width / 20) * 2,
-                      height: 60,
-                      padding: const EdgeInsets.fromLTRB(3, 3, 3, 3),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Color(0xff1692d0),
-                            Color(0xff132e72),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      child: Container(
-                        width: width - (width / 20) * 2,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(11.5),
-                        ),
-                        child: TextFormField(
-                          cursorColor: const Color(0xff1692d0),
-                          controller: Platform.isIOS ? _imeiController : null,
-                          // initialValue: Platform.isAndroid ? _imeiNo : null,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            contentPadding: const EdgeInsets.only(
-                                left: 15, bottom: 5, top: 11, right: 15),
-                            hintText: Platform.isAndroid
-                                ? _imeiNo ?? "Please Enter IMEI Number"
-                                : "Please Enter IMEI Number",
+                    Column(
+                      children: [
+                        Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Color(0xff1692d0),
+                                Color(0xff132e72),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15),
+                              topRight: Radius.circular(15),
+                            ),
                           ),
-                          readOnly: Platform.isIOS ? false : true,
+                          width: width - (width / 20) * 2,
+                          height: width / 12,
+                          child: Center(
+                            child: Text(
+                              "Mobile IMEI Number",
+                              style: TextStyle(
+                                fontSize: width * 0.04,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        Container(
+                          width: width - (width / 20) * 2,
+                          height: 40,
+                          padding: const EdgeInsets.fromLTRB(3, 0, 3, 3),
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Color(0xff1692d0),
+                                Color(0xff132e72),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(15),
+                              bottomRight: Radius.circular(15),
+                            ),
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            width: width - (width / 20) * 2,
+                            height: width / 12,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(12),
+                                bottomRight: Radius.circular(12),
+                              ),
+                            ),
+                            child: Center(
+                              child: TextFormField(
+                                textAlign: TextAlign.center,
+                                cursorColor: const Color(0xff1692d0),
+                                controller:
+                                    Platform.isIOS ? _imeiController : null,
+                                // initialValue: Platform.isAndroid ? _imeiNo : null,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                    contentPadding: const EdgeInsets.only(
+                                        left: 15,
+                                        bottom: 5,
+                                        top: 11,
+                                        right: 15),
+                                    hintText: Platform.isAndroid
+                                        ? _imeiNo ?? "Please Enter IMEI Number"
+                                        : "Please Enter IMEI Number",
+                                    hintStyle: TextStyle(
+                                      fontSize: width * 0.04,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xff132e72),
+                                    )),
+                                readOnly: Platform.isIOS ? false : true,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(
                       height: 15,
@@ -211,19 +261,21 @@ class _SensorsViewState extends State<SensorsView> {
                           customButton(
                             isActive: isActiveStart,
                             callback: (val) {
-                              if (_imeiController.text.isEmpty) {
-                                alert(context, 'Error',
-                                    "Please Enter IMEI Number", () {
-                                  Navigator.pop(context);
-                                });
-                                return;
-                              }
-                              if (_imeiController.text.length < 14) {
-                                alert(context, 'Error', "invalid IMEI Number",
-                                    () {
-                                  Navigator.pop(context);
-                                });
-                                return;
+                              if (Platform.isIOS) {
+                                if (_imeiController.text.isEmpty) {
+                                  alert(context, 'Error',
+                                      "Please Enter IMEI Number", () {
+                                    Navigator.pop(context);
+                                  });
+                                  return;
+                                }
+                                if (_imeiController.text.length < 14) {
+                                  alert(context, 'Error', "invalid IMEI Number",
+                                      () {
+                                    Navigator.pop(context);
+                                  });
+                                  return;
+                                }
                               }
                               setState(() {
                                 isActiveStart = val;
@@ -392,18 +444,16 @@ class _SensorsViewState extends State<SensorsView> {
   void funcationcall() async {
     if (isActiveStart) {
       _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-        setState(() {
-          Map data = {
-            "IMEI": Platform.isIOS ? _imeiController.text : _imeiNo,
-            "Model": "$_manufacturerName  $_modelName}",
-            "Barometer Data": {
-              "Max Pressure": _maximumPressure.toStringAsFixed(3),
-              "Min Pressure": _minimumPressure.toStringAsFixed(3),
-              "Deviation": _deviation.toStringAsFixed(3),
-            }
-          };
-          print("==>  ${data.toString()}");
-        });
+        Map data = {
+          "IMEI": Platform.isIOS ? _imeiController.text : _imeiNo,
+          "Model": "$_manufacturerName  $_modelName}",
+          "Barometer Data": {
+            "Max Pressure": _maximumPressure.toStringAsFixed(3),
+            "Min Pressure": _minimumPressure.toStringAsFixed(3),
+            "Deviation": _deviation.toStringAsFixed(3),
+          }
+        };
+        HttpClinet.postApi(Constants.apiPath, data);
       });
     } else {
       _timer!.cancel();
@@ -442,19 +492,19 @@ alert(context, title, msg, function, {no = 1}) {
     builder: (BuildContext context) {
       return AlertDialog(
         shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(const Radius.circular(20))),
+            borderRadius: BorderRadius.all(Radius.circular(20))),
         backgroundColor: Colors.white,
         title: Text(
           title,
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.black,
           ),
         ),
         content: Text(
           msg,
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.black,
           ),
         ),
@@ -479,7 +529,7 @@ alertActionButton(text, function) {
     child: MaterialButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
       textColor: Colors.white,
-      color: Color(0xff132e72),
+      color: const Color(0xff132e72),
       child: Text(
         text,
         textAlign: TextAlign.center,
