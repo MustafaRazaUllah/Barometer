@@ -1,5 +1,5 @@
-import 'package:barometer/constant.dart';
-import 'package:barometer/view_sensors.dart';
+import 'package:barometer/Constants/constant.dart';
+import 'package:barometer/Barometer/View/view_sensors.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

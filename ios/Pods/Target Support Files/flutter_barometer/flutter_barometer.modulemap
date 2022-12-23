@@ -1,6 +1,0 @@
-framework module flutter_barometer {
-  umbrella header "flutter_barometer-umbrella.h"
-
-  export *
-  module * { export * }
-}
